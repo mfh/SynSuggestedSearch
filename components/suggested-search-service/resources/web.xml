@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE web-app PUBLIC "-//Sun Microsystems, Inc.//DTD Web Application 2.2//EN" "http://java.sun.com/j2ee/dtds/web-app_2_2.dtd">
+<web-app id="suggested-search-service">
+	<servlet>
+		<servlet-name>SuggestedSearchServlet</servlet-name>
+		<servlet-class>com.kana.synergy.comm.SuggestedSearchServlet</servlet-class>
+        
+        <display-name>Suggested Search Servlet</display-name>
+        <description>Suggested Search for KnowledgeManagement</description>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>SuggestedSearchServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>SuggestedSearchServlet</servlet-name>
+        <url-pattern>/*</url-pattern>
+    </servlet-mapping>
+</web-app>

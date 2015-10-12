@@ -1,0 +1,73 @@
+<?xml version="1.0" ?>
+<project name="suggested-search-service" default="build-component">
+    <import file="${default.core.home}/scripts/common.xml"/>
+
+    <target name="init" depends="common.initialise">
+        <mkdir dir="build/classes"/>
+        <mkdir dir="deploy"/>
+        <mkdir dir="resources/lib"/>
+
+        <copy todir="resources/lib" flatten="true">
+            <fileset dir="${core.home}/extensions/RemoteEventPublisher/build" includes="*.jar"/>
+            <fileset dir="${core.home}/extensions/ActiveMQ" includes="*.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="Common.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="FESI.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="GTSystemProperties.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="GT-X7.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="eventPublisher-1.3.3.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="GTX_PBX.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="GTX_BrokerComms.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="Repository.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="RuleEngine_Runtime-1.3.3.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="RuleEngine_Designtime-1.3.3.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="GTX_BpdRuntime.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="jackson-core-asl-1.9.4-sc1.jar"/>
+            <fileset dir="${ciboodle.home}/ProcessKernel/lib" includes="jackson-mapper-asl-1.9.4-sc1.jar"/>
+        </copy>
+
+		<copy file="resources/log4j.xml" todir="build/classes"/>		
+					
+        <path id="compile.classpath">
+            <pathelement location="${toolbox.home}/lib/tools/javaee.jar"/>
+            <fileset dir="resources/lib" includes="**/*.jar"/>
+        </path>
+    </target>
+	
+	<target name="check-component-build">
+        <property name="component.suggested-search-service.build" value="true"/>
+        <condition property="component.suggested-search-service.build.istrue">
+            <istrue value="${component.suggested-search-service.build}"/>
+        </condition>
+    </target>
+    
+    <target name="compile" depends="init">
+        <javac includeantruntime="false" destdir="build/classes" debug="true" srcdir="resources/src">
+            <classpath refid="compile.classpath"/>
+        </javac>
+    </target>
+    
+    <target name="war" depends="compile">
+        <war destfile="build/suggested-search-service.war" webxml="resources/web.xml">
+			<webinf file="resources/jboss-deployment-structure.xml"/>
+            <classes dir="build/classes"/>
+            <lib dir="resources/lib"/>
+        </war>
+    </target>
+	
+    <target name="clean">
+        <delete dir="deploy"/>
+        <delete dir="build/classes"/>
+        <delete dir="resources/lib"/>
+    </target>
+
+    <target name="package" depends="war, check-component-build" if="component.suggested-search-service.build.istrue">
+        <property name="deploy.dir" location="deploy"/>
+
+        <mkdir dir="${deploy.dir}"/>
+        <copy todir="deploy" flatten="true">
+            <fileset dir="build" includes="*.war"/>
+        </copy>
+    </target>
+
+    <target name="build-component" depends="clean, package"/>
+</project>

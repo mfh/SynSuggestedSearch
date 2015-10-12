@@ -1,0 +1,53 @@
+<project name="RemoteEventPublisher" default="package">
+
+    <target name="init">
+        <property file="build.properties"/>
+
+        <property name="srcrep.dir" location="src"/>
+        <property name="buildrep.dir" location="build"/>
+        <property name="buildrep.classes" location="${buildrep.dir}/classes"/>
+        <property name="deployrep.dir" location="deploy"/>
+
+        <path id="compile.classpath">
+            <pathelement location="${ciboodle.home}/ProcessKernel/lib/Common.jar"/>
+			<pathelement location="${ciboodle.home}/ProcessKernel/lib/log4j-1.2.15.jar"/>
+            <pathelement location="${ciboodle.home}/ProcessKernel/lib/GTSystemProperties.jar"/>
+            <pathelement location="${ciboodle.home}/ProcessKernel/lib/GT-X7.jar"/>
+            <pathelement location="${ciboodle.home}/ProcessKernel/lib/FESI.jar"/>
+            <pathelement location="${toolbox.home}/lib/tools/javaee.jar"/>
+        </path>
+    </target>
+
+    <target name="compile" depends="init">
+        <mkdir dir="${buildrep.classes}"/>
+        <javac sourcepath=""
+               srcdir="${srcrep.dir}"
+               destdir="${buildrep.classes}"
+               debug="on"
+               classpathref="compile.classpath">
+        </javac>
+		<copy file="${srcrep.dir}/log4j.xml" todir="${buildrep.classes}"/>
+    </target>
+
+    <target name="package" depends="clean, compile">
+        <jar destfile="${buildrep.dir}/RemoteEventPublisher.jar">
+            <fileset dir="${buildrep.classes}"/>
+            <manifest>
+               <section name="com/kana/synergy/comm/RemoteEventPublisher.class">
+                   <attribute name="Java-Bean" value="true"/>
+               </section>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="publish-extension" depends="package">
+        <copy todir="${target.dir}" flatten="true">
+            <fileset dir="${buildrep.dir}" includes="*.jar"/>
+        </copy>
+    </target>
+
+    <target name="clean" depends="init">
+        <delete dir="${build.dir}"/>
+    </target>
+
+</project>
